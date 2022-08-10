@@ -1,1 +1,1 @@
-Simple project using a C program to blink in-built LED  
+Simple project to blink in-built Arduino LED  
