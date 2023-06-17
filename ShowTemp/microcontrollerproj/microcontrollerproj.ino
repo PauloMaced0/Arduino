@@ -1,8 +1,16 @@
 #include <LiquidCrystal.h>
+#include <SoftwareSerial.h>
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+#define rxPin 10
+#define txPin 11
+
+SoftwareSerial bltSerial(rxPin, txPin);
+
+LiquidCrystal lcd(13, 12, 5, 4, 3, 2);
 const int sensorPin = A0; //usar o pin a que o sensor de temp esta ligado
-volatile float temperature = 0.0;
+float temperature = 0.0;
+float highestTemp = 0.0;
+float lowestTemp = 100.0;
 
 byte customShape[] = {
   B00000,
@@ -34,18 +42,18 @@ ISR(TIMER1_COMPA_vect) {
   int SensorVal = analogRead(sensorPin);
   float voltage = (SensorVal / 1024.0) * 5.0;
   temperature = (voltage - 0.5) * 100;
-  
   TIFR1 |= (1 << OCF1A);  // Clear Timer2 Compare Match A interrupt flag
 }
 
 void setup(void) {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
+  pinMode(rxPin, INPUT);
+  pinMode(txPin, OUTPUT);
+  
+  bltSerial.begin(9600);
   lcd.begin(16, 2);
   
   setup_timer_1();
 
-  //Setup Enable interrupts
   interrupts();
 }
 
@@ -55,9 +63,38 @@ void loop(void) {
   lcd.print("Temperature:"); 
   lcd.setCursor(0, 1);
   lcd.print(temperature);
-  lcd.createChar(6, customShape); // Create a custom character at position 0
+  lcd.createChar(6, customShape); 
   lcd.setCursor(6, 1);
-  lcd.write((byte)6); // Display the custom shape on the LCD
+  lcd.write((byte)6);
   lcd.print("C");
-  delay(100); // f = 10hz
+
+  if (temperature > highestTemp) {
+     highestTemp = temperature;
+  } 
+
+  if (temperature < lowestTemp) {
+     lowestTemp = temperature;
+  }
+  
+  while (bltSerial.available() > 0) {
+    char receiveData = (char) bltSerial.read();
+    
+    switch (receiveData) {
+      case 'c':
+        bltSerial.print(temperature);
+        bltSerial.println(" ºC");
+        break;
+      case 'h':
+        bltSerial.print(highestTemp);
+        bltSerial.println(" ºC");
+        break;
+      case 'l':
+        bltSerial.print(lowestTemp);
+        bltSerial.println(" ºC");
+      default:
+        break;
+    }
+  }
+  
+  delay(100);
 }
