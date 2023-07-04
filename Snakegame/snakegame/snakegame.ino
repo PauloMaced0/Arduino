@@ -167,7 +167,7 @@ void checkCollision() {
   if (snakeX[0][0] == food.lcd_x && snakeX[0][1] == food.matrix_x && snakeY[0][0] == food.lcd_y && snakeY[0][1] == food.matrix_y) {
     // Increase the snake's length
     snakeLength++;
-    if(snakeLegth >= MAX_LENGTH){
+    if(snakeLength >= MAX_LENGTH){
       gameWon = true;
     }
     // Generate new food
