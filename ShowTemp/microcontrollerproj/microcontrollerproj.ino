@@ -8,7 +8,7 @@ SoftwareSerial bltSerial(rxPin, txPin);
 
 LiquidCrystal lcd(13, 12, 5, 4, 3, 2);
 const int sensorPin = A0; //usar o pin a que o sensor de temp esta ligado
-float temperature = 0.0;
+volatile float temperature = 0.0;
 float highestTemp = 0.0;
 float lowestTemp = 100.0;
 
@@ -67,7 +67,7 @@ void loop(void) {
   lcd.setCursor(6, 1);
   lcd.write((byte)6);
   lcd.print("C");
-
+  
   if (temperature > highestTemp) {
      highestTemp = temperature;
   } 
@@ -81,7 +81,7 @@ void loop(void) {
     
     switch (receiveData) {
       case 'c':
-        bltSerial.print(temperature);
+        bltSerial.print(20);
         bltSerial.println(" ºC");
         break;
       case 'h':
@@ -96,5 +96,5 @@ void loop(void) {
     }
   }
   
-  delay(100);
+  delay(10);
 }
