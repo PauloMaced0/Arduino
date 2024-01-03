@@ -13,7 +13,7 @@ byte snakeX[MAX_LENGTH][2]; // X's-coordinate of each segment of the snake
 byte snakeY[MAX_LENGTH][2]; // Y's-coordinate of each segment of the snake
 byte snakeLength = 1; 
 byte snakeDirection = 0; // Direction of the snake (0: right, 1: down, 2: left, 3: up)
-int snakeSpeed = 350;
+int snakeSpeed = 300;
 bool gameOver = false;
 bool gameWon = false;
 
